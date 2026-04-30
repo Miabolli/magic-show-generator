@@ -117,14 +117,34 @@
     display: none;
   }
   .show.visible { display: block; }
-  .show h2 {
+  .show h2.show-title {
     font-family: Georgia, serif;
     font-size: 26px;
     color: var(--canal);
     margin-bottom: 1.5rem;
     line-height: 1.2;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
   }
-  .show-content { font-size: 16px; color: var(--ink); white-space: pre-wrap; line-height: 1.7; }
+  .show-content { font-size: 16px; color: var(--ink); line-height: 1.7; }
+  .show-content h2 { font-family: Georgia, serif; font-size: 22px; color: var(--canal); margin: 1.75rem 0 0.75rem; font-weight: 500; }
+  .show-content h2:first-child { margin-top: 0; }
+  .show-content h3 { font-size: 17px; color: var(--canal); margin: 1.25rem 0 0.5rem; font-weight: 500; }
+  .show-content p { margin: 0 0 1rem; }
+  .show-content strong { color: var(--canal); font-weight: 600; }
+  .show-content em { font-style: italic; }
+  .show-content hr { border: none; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+  .show-content blockquote {
+    border-left: 3px solid var(--warm);
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 1rem 0;
+    background: var(--warm-soft);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--canal);
+  }
+  .show-content ul, .show-content ol { margin: 0.5rem 0 1rem; padding-left: 1.5rem; }
+  .show-content li { margin-bottom: 0.4rem; }
   .loading { display: none; text-align: center; color: var(--muted); padding: 2rem; font-size: 15px; }
   .loading.visible { display: block; }
   .dots span {
@@ -200,7 +220,7 @@
   </div>
 
   <div class="show" id="show">
-    <h2 id="show-title">Your Magic Show</h2>
+    <h2 class="show-title" id="show-title">Your Magic Show</h2>
     <div class="show-content" id="show-content"></div>
   </div>
 
@@ -258,7 +278,7 @@
 
       const data = await response.json();
       showTitleEl.textContent = `Magic Show: ${topic.length > 60 ? topic.slice(0, 57) + '...' : topic}`;
-      showContentEl.textContent = data.text;
+      showContentEl.innerHTML = formatMarkdown(data.text);
       showEl.classList.add('visible');
       showEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -270,6 +290,40 @@
       generateBtn.textContent = "Generate this week's Magic Show";
     }
   });
+
+  function formatMarkdown(text) {
+    let html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/(^|[^*])\*([^*\n]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
+
+    html = html.replace(/^---+$/gm, '<hr>');
+    html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+
+    html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>[\s\S]*?<\/li>)(?=\n\n|\n[^<]|$)/g, '<ul>$1</ul>');
+    html = html.replace(/<\/li>\n<li>/g, '</li><li>');
+
+    html = html.replace(/\n\n+/g, '</p><p>');
+    html = '<p>' + html + '</p>';
+
+    html = html.replace(/<p>(<h2>[\s\S]*?<\/h2>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<h3>[\s\S]*?<\/h3>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<hr>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<blockquote>[\s\S]*?<\/blockquote>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<ul>[\s\S]*?<\/ul>)<\/p>/g, '$1');
+
+    html = html.replace(/<p>\s*<\/p>/g, '');
+
+    return html;
+  }
 
   function showError(msg) {
     errorEl.textContent = msg;
