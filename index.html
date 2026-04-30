@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Magic Show Generator — Built for Nedstar by Mia Bauza Mas</title>
+<style>
+  :root {
+    --canal: #1a3a52;
+    --canal-light: #2d5577;
+    --warm: #e8b86a;
+    --warm-soft: #f5e6c8;
+    --paper: #faf6ee;
+    --ink: #1c1c1c;
+    --muted: #5a5a5a;
+    --line: rgba(28, 28, 28, 0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 2.5rem; }
+  .pill {
+    display: inline-block;
+    background: var(--warm-soft);
+    color: var(--canal);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 38px;
+    font-weight: 500;
+    color: var(--canal);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .subtitle { font-size: 17px; color: var(--muted); max-width: 540px; margin: 0 auto 0.5rem; }
+  .credit { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 0.75rem; }
+  .card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-label {
+    display: block;
+    font-size: 13px;
+    color: var(--canal);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  textarea, input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--canal); }
+  textarea { min-height: 80px; }
+  .helper { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .example-chip {
+    background: var(--warm-soft);
+    color: var(--canal);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .example-chip:hover { background: var(--warm); color: white; }
+  .generate-btn {
+    width: 100%;
+    background: var(--canal);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: background 0.15s;
+  }
+  .generate-btn:hover:not(:disabled) { background: var(--canal-light); }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .show {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    display: none;
+  }
+  .show.visible { display: block; }
+  .show h2 {
+    font-family: Georgia, serif;
+    font-size: 26px;
+    color: var(--canal);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+  .show-content { font-size: 16px; color: var(--ink); white-space: pre-wrap; line-height: 1.7; }
+  .loading { display: none; text-align: center; color: var(--muted); padding: 2rem; font-size: 15px; }
+  .loading.visible { display: block; }
+  .dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin: 0 3px;
+    background: var(--warm);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+  }
+  .dots span:nth-child(1) { animation-delay: -0.32s; }
+  .dots span:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+  .footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .footer a { color: var(--canal); text-decoration: none; font-weight: 500; }
+  .error {
+    background: #fef2f2;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-top: 1rem;
+    font-size: 14px;
+    display: none;
+  }
+  .error.visible { display: block; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <span class="pill">Built for Nedstar — week 0 prototype</span>
+    <h1>The Magic Show Generator</h1>
+    <p class="subtitle">Type any business topic. Get a complete 5-minute internal AI demo, ready to present.</p>
+    <p class="credit">A working preview of the role, by Mia Bauza Mas</p>
+  </header>
+
+  <div class="card">
+    <label class="input-label" for="topic">What should this week's Magic Show be about?</label>
+    <textarea id="topic" placeholder="e.g. Using AI to summarise daily ethanol market reports, or speeding up contract review for the trading team..."></textarea>
+    <p class="helper">Pick anything: a workflow, a question someone asked you, a problem you've noticed.</p>
+
+    <div class="examples">
+      <button class="example-chip" data-example="Using AI to triage and summarise overnight market news for the trading desk before the morning meeting">Market news triage</button>
+      <button class="example-chip" data-example="Speeding up KYC and counterparty due diligence checks with AI-assisted research">KYC and due diligence</button>
+      <button class="example-chip" data-example="Translating supplier emails and contracts across the seven languages spoken at Nedstar">Multilingual supplier comms</button>
+      <button class="example-chip" data-example="Spotting patterns in shipping and logistics delays using AI on operations data">Logistics pattern spotting</button>
+    </div>
+
+    <label class="input-label" for="audience" style="margin-top: 1.5rem;">Who's in the room? (optional)</label>
+    <input type="text" id="audience" placeholder="e.g. trading team, ops team, CEO, the whole company" />
+
+    <button class="generate-btn" id="generate">Generate this week's Magic Show</button>
+
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="dots"><span></span><span></span><span></span></div>
+    <p style="margin-top: 1rem;">Crafting a Magic Show worth standing up for...</p>
+  </div>
+
+  <div class="show" id="show">
+    <h2 id="show-title">Your Magic Show</h2>
+    <div class="show-content" id="show-content"></div>
+  </div>
+
+  <div class="footer">
+    <p>Built in a few hours using the Anthropic API, plain HTML, and curiosity.<br>
+    No backend, no database, no fuss. The elegant shortcut, every time.</p>
+    <p style="margin-top: 1rem;">Mia Bauza Mas · <a href="mailto:mireiabauzamas@gmail.com">mireiabauzamas@gmail.com</a></p>
+  </div>
+
+</div>
+
+<script>
+  const topicEl = document.getElementById('topic');
+  const audienceEl = document.getElementById('audience');
+  const generateBtn = document.getElementById('generate');
+  const loadingEl = document.getElementById('loading');
+  const showEl = document.getElementById('show');
+  const showTitleEl = document.getElementById('show-title');
+  const showContentEl = document.getElementById('show-content');
+  const errorEl = document.getElementById('error');
+
+  document.querySelectorAll('.example-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      topicEl.value = chip.dataset.example;
+      topicEl.focus();
+    });
+  });
+
+  generateBtn.addEventListener('click', async () => {
+    const topic = topicEl.value.trim();
+    if (!topic) {
+      showError("Tell me what topic to build the Magic Show around.");
+      return;
+    }
+
+    const audience = audienceEl.value.trim() || 'the whole Nedstar team';
+
+    errorEl.classList.remove('visible');
+    showEl.classList.remove('visible');
+    loadingEl.classList.add('visible');
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Working on it...';
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, audience })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Request failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      showTitleEl.textContent = `Magic Show: ${topic.length > 60 ? topic.slice(0, 57) + '...' : topic}`;
+      showContentEl.textContent = data.text;
+      showEl.classList.add('visible');
+      showEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      showError(`Something went wrong: ${err.message}`);
+    } finally {
+      loadingEl.classList.remove('visible');
+      generateBtn.disabled = false;
+      generateBtn.textContent = "Generate this week's Magic Show";
+    }
+  });
+
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.classList.add('visible');
+  }
+</script>
+</body>
+</html>

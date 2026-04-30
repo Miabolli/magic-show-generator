@@ -1,0 +1,9 @@
+{
+  "name": "magic-show-generator",
+  "version": "1.0.0",
+  "description": "A Magic Show generator built for the Nedstar AI Explorer application.",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
