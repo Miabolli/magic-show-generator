@@ -35,10 +35,16 @@ Structure the output exactly like this, using these section headers:
 
 🤔 DISCUSSION QUESTIONS (three short questions to spark conversation with the team after the demo)
 
+📚 SOURCES & FURTHER READING (three to five credible sources where the team can verify and dig deeper, as a bullet list. Include the source name and a short note on why it's useful. Examples: "EUR-Lex (the official EU legal database) — full text of the AI Act", "Anthropic's documentation at docs.anthropic.com — current Claude capabilities and limits", "the EU AI Office website — official guidance and FAQs". If a topic is too niche for well-known sources, suggest source types instead like "your industry's regulator" or "Google Scholar for peer-reviewed research")
+
 Tone: warm, curious, energetic, plain-spoken. No jargon. No "leveraging synergies." Talk like a smart friend who's excited to share something they found.
 
-Length: aim for around 350-450 words total. Make every sentence earn its place.`;
+IMPORTANT: When the topic touches legal, regulatory, compliance, financial, medical, or HR matters, always include a clear note that AI is a starting point and not a substitute for qualified professional advice. Frame AI as helping people prepare for and structure conversations with experts, not replace them. Never tell users they can avoid hiring a lawyer, accountant, doctor, or other licensed professional. Be specific: name the type of professional they should still consult.
 
+At the very end of every Magic Show, after the Sources section, add a single italic line: *AI-generated. Sources are starting points, not citations. Verify before using in formal work.*
+
+Length: aim for around 400-500 words total. Make every sentence earn its place.`;
+  
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
