@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Magic Show Generator — Built for Nedstar by Mia Bauza Mas</title>
+<title>The AI Explorer Toolkit — Built for Nedstar by Mia Bauza Mas</title>
 <style>
   :root {
     --canal: #1a3a52;
     --canal-light: #2d5577;
+    --canal-soft: #d6e1eb;
     --warm: #e8b86a;
     --warm-soft: #f5e6c8;
     --paper: #faf6ee;
     --ink: #1c1c1c;
     --muted: #5a5a5a;
     --line: rgba(28, 28, 28, 0.12);
+    --line-strong: rgba(28, 28, 28, 0.2);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -24,7 +26,7 @@
     min-height: 100vh;
     padding: 2rem 1rem;
   }
-  .container { max-width: 720px; margin: 0 auto; }
+  .container { max-width: 760px; margin: 0 auto; }
   header { text-align: center; margin-bottom: 2.5rem; }
   .pill {
     display: inline-block;
@@ -46,8 +48,40 @@
     line-height: 1.15;
     margin-bottom: 0.75rem;
   }
-  .subtitle { font-size: 17px; color: var(--muted); max-width: 540px; margin: 0 auto 0.5rem; }
+  .subtitle { font-size: 17px; color: var(--muted); max-width: 580px; margin: 0 auto 0.5rem; }
   .credit { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 0.75rem; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 6px;
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--canal);
+    color: white;
+  }
+  .tab:hover:not(.active) { background: var(--paper); color: var(--canal); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
   .card {
     background: white;
     border: 1px solid var(--line);
@@ -92,6 +126,7 @@
     transition: background 0.15s;
   }
   .example-chip:hover { background: var(--warm); color: white; }
+
   .generate-btn {
     width: 100%;
     background: var(--canal);
@@ -108,6 +143,48 @@
   }
   .generate-btn:hover:not(:disabled) { background: var(--canal-light); }
   .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .library-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 1rem;
+  }
+  .library-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    font-family: inherit;
+    width: 100%;
+  }
+  .library-card:hover {
+    border-color: var(--canal);
+    background: var(--canal-soft);
+  }
+  .library-title {
+    font-weight: 500;
+    color: var(--canal);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .library-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .library-section-label {
+    font-size: 12px;
+    color: var(--canal);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1.25rem 0 0.5rem;
+  }
+
   .show {
     background: white;
     border: 1px solid var(--line);
@@ -117,19 +194,50 @@
     display: none;
   }
   .show.visible { display: block; }
-  .show h2.show-title {
-    font-family: Georgia, serif;
-    font-size: 26px;
-    color: var(--canal);
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
+  .show-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--line);
+    margin-bottom: 1.5rem;
   }
+  .show h2.show-title {
+    font-family: Georgia, serif;
+    font-size: 24px;
+    color: var(--canal);
+    line-height: 1.25;
+    font-weight: 500;
+    flex: 1;
+  }
+  .pdf-btn {
+    background: white;
+    color: var(--canal);
+    border: 1px solid var(--line-strong);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .pdf-btn:hover { border-color: var(--canal); background: var(--canal-soft); }
+
   .show-content { font-size: 16px; color: var(--ink); line-height: 1.7; }
-  .show-content h2 { font-family: Georgia, serif; font-size: 22px; color: var(--canal); margin: 1.75rem 0 0.75rem; font-weight: 500; }
+  .show-content h2 {
+    font-family: Georgia, serif;
+    font-size: 20px;
+    color: var(--canal);
+    margin: 1.75rem 0 0.75rem;
+    font-weight: 500;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
   .show-content h2:first-child { margin-top: 0; }
-  .show-content h3 { font-size: 17px; color: var(--canal); margin: 1.25rem 0 0.5rem; font-weight: 500; }
+  .show-content h3 { font-size: 16px; color: var(--canal); margin: 1.25rem 0 0.5rem; font-weight: 600; }
   .show-content p { margin: 0 0 1rem; }
   .show-content strong { color: var(--canal); font-weight: 600; }
   .show-content em { font-style: italic; }
@@ -145,6 +253,15 @@
   }
   .show-content ul, .show-content ol { margin: 0.5rem 0 1rem; padding-left: 1.5rem; }
   .show-content li { margin-bottom: 0.4rem; }
+  .show-content > p:last-child em:only-child {
+    color: var(--muted);
+    font-size: 13px;
+    display: block;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
   .loading { display: none; text-align: center; color: var(--muted); padding: 2rem; font-size: 15px; }
   .loading.visible { display: block; }
   .dots span {
@@ -162,6 +279,7 @@
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1); }
   }
+
   .footer {
     text-align: center;
     margin-top: 3rem;
@@ -172,6 +290,7 @@
     line-height: 1.7;
   }
   .footer a { color: var(--canal); text-decoration: none; font-weight: 500; }
+
   .error {
     background: #fef2f2;
     color: #991b1b;
@@ -182,6 +301,14 @@
     display: none;
   }
   .error.visible { display: block; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .container { max-width: 100%; }
+    header, .tabs, .card, .footer, .pdf-btn { display: none !important; }
+    .show { border: none; box-shadow: none; padding: 0; margin: 0; }
+    .show-header { border-bottom: 2px solid #1a3a52; }
+  }
 </style>
 </head>
 <body>
@@ -189,86 +316,239 @@
 
   <header>
     <span class="pill">Built for Nedstar — week 0 prototype</span>
-    <h1>The Magic Show Generator</h1>
-    <p class="subtitle">Type any business topic. Get a complete 5-minute internal AI demo, ready to present.</p>
-    <p class="credit">A working preview of the role, by Mia Bauza Mas</p>
+    <h1>The AI Explorer Toolkit</h1>
+    <p class="subtitle">A working preview of how I'd approach the role: generating Magic Shows, finding quick wins, and translating AI into business value.</p>
+    <p class="credit">By Mia Bauza Mas — built tonight, in a few hours, with the Anthropic API</p>
   </header>
 
-  <div class="card">
-    <label class="input-label" for="topic">What should this week's Magic Show be about?</label>
-    <textarea id="topic" placeholder="e.g. Using AI to summarise daily ethanol market reports, or speeding up contract review for the trading team..."></textarea>
-    <p class="helper">Pick anything: a workflow, a question someone asked you, a problem you've noticed.</p>
+  <div class="tabs">
+    <button class="tab active" data-tab="magic">🎩 Magic Show generator</button>
+    <button class="tab" data-tab="quickwin">⚡ Quick Win finder</button>
+    <button class="tab" data-tab="library">📚 7-week launch plan</button>
+  </div>
 
-    <div class="examples">
-      <button class="example-chip" data-example="Using AI to triage and summarise overnight market news for the trading desk before the morning meeting">Market news triage</button>
-      <button class="example-chip" data-example="Speeding up KYC and counterparty due diligence checks with AI-assisted research">KYC and due diligence</button>
-      <button class="example-chip" data-example="Translating supplier emails and contracts across the seven languages spoken at Nedstar">Multilingual supplier comms</button>
-      <button class="example-chip" data-example="Spotting patterns in shipping and logistics delays using AI on operations data">Logistics pattern spotting</button>
+  <!-- MAGIC SHOW PANEL -->
+  <div class="panel active" id="panel-magic">
+    <div class="card">
+      <label class="input-label" for="topic">What should this week's Magic Show be about?</label>
+      <textarea id="topic" placeholder="e.g. Using AI to summarise daily ethanol market reports, or speeding up contract review for the trading team..."></textarea>
+      <p class="helper">Pick anything: a workflow, a question someone asked you, a problem you've noticed.</p>
+
+      <div class="examples">
+        <button class="example-chip" data-example="Using AI to triage and summarise overnight market news for the trading desk before the morning meeting">Market news triage</button>
+        <button class="example-chip" data-example="Speeding up KYC and counterparty due diligence checks with AI-assisted research">KYC and due diligence</button>
+        <button class="example-chip" data-example="Translating supplier emails and contracts across the seven languages spoken at Nedstar">Multilingual supplier comms</button>
+        <button class="example-chip" data-example="Spotting patterns in shipping and logistics delays using AI on operations data">Logistics pattern spotting</button>
+      </div>
+
+      <label class="input-label" for="audience" style="margin-top: 1.5rem;">Who's in the room? (optional)</label>
+      <input type="text" id="audience" placeholder="e.g. trading team, ops team, CEO, the whole company" />
+
+      <button class="generate-btn" id="generate-magic">Generate this week's Magic Show</button>
     </div>
+  </div>
 
-    <label class="input-label" for="audience" style="margin-top: 1.5rem;">Who's in the room? (optional)</label>
-    <input type="text" id="audience" placeholder="e.g. trading team, ops team, CEO, the whole company" />
+  <!-- QUICK WIN PANEL -->
+  <div class="panel" id="panel-quickwin">
+    <div class="card">
+      <label class="input-label" for="workflow">Describe a workflow that's eating someone's time</label>
+      <textarea id="workflow" placeholder="e.g. Every morning I spend 45 minutes reading market reports and emails, then summarising the key points for the team..." style="min-height: 110px;"></textarea>
+      <p class="helper">Be specific. The more detail you give, the better the suggestions. This is what I'd do when I sit with each team in week 1.</p>
 
-    <button class="generate-btn" id="generate">Generate this week's Magic Show</button>
+      <div class="examples">
+        <button class="example-chip" data-workflow="Every morning I spend 45 minutes reading overnight market news and writing a summary email for the trading desk">Morning market summary</button>
+        <button class="example-chip" data-workflow="When a new supplier wants to work with us, I have to research their company, check news for any red flags, and write a 1-page risk brief">Supplier risk briefs</button>
+        <button class="example-chip" data-workflow="I get 30+ emails a day from suppliers in different languages and have to triage which ones are urgent">Multilingual email triage</button>
+        <button class="example-chip" data-workflow="Every Friday I pull data from three different systems to make our weekly logistics report">Weekly logistics report</button>
+      </div>
 
-    <div class="error" id="error"></div>
+      <button class="generate-btn" id="generate-quickwin">Find AI quick wins</button>
+    </div>
+  </div>
+
+  <!-- LIBRARY PANEL -->
+  <div class="panel" id="panel-library">
+    <div class="card">
+      <p style="margin-bottom: 0.5rem; color: var(--canal); font-weight: 500;">My first seven weeks at Nedstar.</p>
+      <p style="font-size: 14px; color: var(--muted); margin-bottom: 0.5rem;">If hired, here's what I'd run as my first seven Magic Shows. Each one targets a different team and a different category of value. Click any to generate the full demo script.</p>
+
+      <p class="library-section-label">Weeks 1-2: Get the trading desk excited</p>
+      <button class="library-card" data-topic="Using AI to triage and summarise overnight market news for the trading desk before the morning meeting" data-audience="trading team">
+        <div class="library-title">Week 1 — The morning briefing, on autopilot</div>
+        <div class="library-desc">Show the trading team how 30 minutes of news reading can become 3 minutes of high-quality summary, in any language.</div>
+      </button>
+      <button class="library-card" data-topic="Taking whatever market data feed Nedstar relies on and building a plain-language sidekick that explains moves, flags anomalies, and answers questions on demand" data-audience="trading team">
+        <div class="library-title">Week 2 — A market-data sidekick (whatever you use)</div>
+        <div class="library-desc">Take whatever data feed the team relies on (Argus, Platts, supplier briefings, anything) and turn it into a sidekick that explains moves and answers questions in plain language. Anyone on the team can use it without bothering the senior trader.</div>
+      </button>
+
+      <p class="library-section-label">Weeks 3-4: Embed with ops and logistics</p>
+      <button class="library-card" data-topic="Using AI to spot patterns in shipping and logistics delays across our supplier network and flag root causes" data-audience="logistics and operations team">
+        <div class="library-title">Week 3 — Logistics pattern spotting</div>
+        <div class="library-desc">Take a year of shipping data, find the recurring delay patterns, surface the suppliers and routes that need attention.</div>
+      </button>
+      <button class="library-card" data-topic="Translating supplier emails and contracts across the seven languages spoken at Nedstar with AI, including handling cultural nuance" data-audience="ops and trading teams">
+        <div class="library-title">Week 4 — Multilingual supplier comms, faster and warmer</div>
+        <div class="library-desc">Show how AI can translate not just words but tone, so we never accidentally insult a supplier in Asia or Africa.</div>
+      </button>
+
+      <p class="library-section-label">Weeks 5-6: Risk, compliance, and the boring-but-critical</p>
+      <button class="library-card" data-topic="Speeding up KYC and counterparty due diligence checks with AI-assisted research and structured risk scoring" data-audience="risk and compliance team">
+        <div class="library-title">Week 5 — KYC and due diligence in half the time</div>
+        <div class="library-desc">Turn a 90-minute due diligence dive into a 30-minute structured AI-assisted brief, with a clear human-review step.</div>
+      </button>
+      <button class="library-card" data-topic="Using AI to track regulatory changes affecting ethanol trading across our key markets and translate them into action items" data-audience="compliance and leadership team">
+        <div class="library-title">Week 6 — Regulatory radar across our markets</div>
+        <div class="library-desc">A daily AI scan of new regulations across our ethanol markets, rendered as a one-page brief for leadership.</div>
+      </button>
+
+      <p class="library-section-label">Week 7: A win for the whole company</p>
+      <button class="library-card" data-topic="Building a Nedstar-specific internal AI assistant that anyone in the team can ask questions about company processes, contacts, and recent decisions" data-audience="the whole Nedstar team">
+        <div class="library-title">Week 7 — A Nedstar AI assistant for the whole team</div>
+        <div class="library-desc">A simple internal AI tool that knows our processes, our people, and our recent decisions — so new joiners and busy teammates can ask anything.</div>
+      </button>
+    </div>
   </div>
 
   <div class="loading" id="loading">
     <div class="dots"><span></span><span></span><span></span></div>
-    <p style="margin-top: 1rem;">Crafting a Magic Show worth standing up for...</p>
+    <p style="margin-top: 1rem;" id="loading-text">Crafting something worth standing up for...</p>
   </div>
 
+  <div class="error" id="error"></div>
+
   <div class="show" id="show">
-    <h2 class="show-title" id="show-title">Your Magic Show</h2>
+    <div class="show-header">
+      <h2 class="show-title" id="show-title">Output</h2>
+      <button class="pdf-btn" id="pdf-btn" title="Opens print dialog. Choose 'Save as PDF' as the destination.">Download as PDF</button>
+    </div>
     <div class="show-content" id="show-content"></div>
   </div>
 
   <div class="footer">
-    <p>Built in a few hours using the Anthropic API, plain HTML, and curiosity.<br>
-    No backend, no database, no fuss. The elegant shortcut, every time.</p>
+    <p>One HTML file, one serverless function, the Anthropic API, and Claude Haiku 4.5.<br>
+    The elegant shortcut version of the role itself.</p>
     <p style="margin-top: 1rem;">Mia Bauza Mas · <a href="mailto:mireiabauzamas@gmail.com">mireiabauzamas@gmail.com</a></p>
   </div>
 
 </div>
 
 <script>
-  const topicEl = document.getElementById('topic');
-  const audienceEl = document.getElementById('audience');
-  const generateBtn = document.getElementById('generate');
-  const loadingEl = document.getElementById('loading');
-  const showEl = document.getElementById('show');
-  const showTitleEl = document.getElementById('show-title');
-  const showContentEl = document.getElementById('show-content');
-  const errorEl = document.getElementById('error');
-
-  document.querySelectorAll('.example-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      topicEl.value = chip.dataset.example;
-      topicEl.focus();
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      // Hide previous output when switching tabs
+      document.getElementById('show').classList.remove('visible');
+      document.getElementById('error').classList.remove('visible');
     });
   });
 
-  generateBtn.addEventListener('click', async () => {
-    const topic = topicEl.value.trim();
+  // Magic Show example chips
+  document.querySelectorAll('#panel-magic .example-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.getElementById('topic').value = chip.dataset.example;
+      document.getElementById('topic').focus();
+    });
+  });
+
+  // Quick Win example chips
+  document.querySelectorAll('#panel-quickwin .example-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.getElementById('workflow').value = chip.dataset.workflow;
+      document.getElementById('workflow').focus();
+    });
+  });
+
+  // Library cards
+  document.querySelectorAll('.library-card').forEach(card => {
+    card.addEventListener('click', () => {
+      // Switch to magic show tab
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      document.querySelector('.tab[data-tab="magic"]').classList.add('active');
+      document.getElementById('panel-magic').classList.add('active');
+      // Fill in the topic
+      document.getElementById('topic').value = card.dataset.topic;
+      document.getElementById('audience').value = card.dataset.audience || '';
+      // Auto-generate
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => generateMagicShow(), 300);
+    });
+  });
+
+  // Generate buttons
+  document.getElementById('generate-magic').addEventListener('click', generateMagicShow);
+  document.getElementById('generate-quickwin').addEventListener('click', generateQuickWin);
+  document.getElementById('pdf-btn').addEventListener('click', () => window.print());
+
+  async function generateMagicShow() {
+    const topic = document.getElementById('topic').value.trim();
     if (!topic) {
       showError("Tell me what topic to build the Magic Show around.");
       return;
     }
+    const audience = document.getElementById('audience').value.trim();
+    await callApi({
+      mode: 'magic_show',
+      topic,
+      audience,
+      titlePrefix: 'Magic Show',
+      titleSource: topic,
+      loadingText: 'Crafting a Magic Show worth standing up for...',
+      btnId: 'generate-magic',
+      btnText: 'Generate this week\'s Magic Show'
+    });
+  }
 
-    const audience = audienceEl.value.trim() || 'the whole Nedstar team';
+  async function generateQuickWin() {
+    const workflow = document.getElementById('workflow').value.trim();
+    if (!workflow) {
+      showError("Describe a workflow first so I have something to work with.");
+      return;
+    }
+    await callApi({
+      mode: 'quick_win',
+      workflow,
+      titlePrefix: 'Quick wins for',
+      titleSource: workflow,
+      loadingText: 'Hunting for the elegant shortcut...',
+      btnId: 'generate-quickwin',
+      btnText: 'Find AI quick wins'
+    });
+  }
+
+  async function callApi(opts) {
+    const errorEl = document.getElementById('error');
+    const showEl = document.getElementById('show');
+    const loadingEl = document.getElementById('loading');
+    const loadingText = document.getElementById('loading-text');
+    const showTitle = document.getElementById('show-title');
+    const showContent = document.getElementById('show-content');
+    const btn = document.getElementById(opts.btnId);
 
     errorEl.classList.remove('visible');
     showEl.classList.remove('visible');
     loadingEl.classList.add('visible');
-    generateBtn.disabled = true;
-    generateBtn.textContent = 'Working on it...';
+    loadingText.textContent = opts.loadingText;
+    btn.disabled = true;
+    btn.textContent = 'Working on it...';
 
     try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, audience })
+      const body = { mode: opts.mode };
+      if (opts.topic) body.topic = opts.topic;
+      if (opts.audience) body.audience = opts.audience;
+      if (opts.workflow) body.workflow = opts.workflow;
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
 
       if (!response.ok) {
@@ -277,19 +557,19 @@
       }
 
       const data = await response.json();
-      showTitleEl.textContent = `Magic Show: ${topic.length > 60 ? topic.slice(0, 57) + '...' : topic}`;
-      showContentEl.innerHTML = formatMarkdown(data.text);
+      const truncated = opts.titleSource.length > 60 ? opts.titleSource.slice(0, 57) + '...' : opts.titleSource;
+      showTitle.textContent = `${opts.titlePrefix}: ${truncated}`;
+      showContent.innerHTML = formatMarkdown(data.text);
       showEl.classList.add('visible');
       showEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
     } catch (err) {
       showError(`Something went wrong: ${err.message}`);
     } finally {
       loadingEl.classList.remove('visible');
-      generateBtn.disabled = false;
-      generateBtn.textContent = "Generate this week's Magic Show";
+      btn.disabled = false;
+      btn.textContent = opts.btnText;
     }
-  });
+  }
 
   function formatMarkdown(text) {
     let html = text
@@ -308,6 +588,7 @@
     html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
 
     html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
     html = html.replace(/(<li>[\s\S]*?<\/li>)(?=\n\n|\n[^<]|$)/g, '<ul>$1</ul>');
     html = html.replace(/<\/li>\n<li>/g, '</li><li>');
 
@@ -319,13 +600,13 @@
     html = html.replace(/<p>(<hr>)<\/p>/g, '$1');
     html = html.replace(/<p>(<blockquote>[\s\S]*?<\/blockquote>)<\/p>/g, '$1');
     html = html.replace(/<p>(<ul>[\s\S]*?<\/ul>)<\/p>/g, '$1');
-
     html = html.replace(/<p>\s*<\/p>/g, '');
 
     return html;
   }
 
   function showError(msg) {
+    const errorEl = document.getElementById('error');
     errorEl.textContent = msg;
     errorEl.classList.add('visible');
   }
